@@ -16,18 +16,20 @@ export const authOptions: NextAuthOptions = {
   ],
   jwt:{
       encode: ({secret, token}) => {
-        const encodedToken = jsonwebtoken.sign({
+        const encodedToken = jsonwebtoken.sign(
+          {
             ...token,
             iss: 'grafbase',
             exp: Math.floor(Date.now() / 1000) + 60 * 60 // 13 horas
-        }, secret)
-
+          },
+          secret
+        );
         return encodedToken;
       },
       decode: async({secret, token}) => {
-        const decodedToken = jsonwebtoken.verify(token!, secret) as JWT;
+        const decodedToken = jsonwebtoken.verify(token!, secret);
 
-        return decodedToken;
+        return decodedToken as JWT;
       }
   },
   theme: {
@@ -59,9 +61,7 @@ export const authOptions: NextAuthOptions = {
     async signIn({ user }: { user: AdapterUser | User }) {
       try {
         // get user if exists
-        const userExist = (await getUser(user?.email as string)) as {
-          user?: UserProfile;
-        };
+        const userExist = (await getUser(user?.email as string)) as {user?: UserProfile};
         // if user dont exists
         if (!userExist.user) {
           await createUser(
@@ -80,7 +80,7 @@ export const authOptions: NextAuthOptions = {
 };
 
 export async function getCurrentUser() {
-  const session = (await getServerSession(authOptions)) as SessionInterface;
+  const session = await getServerSession(authOptions) as SessionInterface;
 
   return session;
 }
