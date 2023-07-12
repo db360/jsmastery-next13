@@ -1,5 +1,5 @@
 import { ProjectForm } from "@/common.types";
-import { createUserMutation, getUserQuery } from "@/graphql";
+import { createProjectMutation, createUserMutation, getUserQuery } from "@/graphql";
 import { GraphQLClient } from "graphql-request";
 
 // Tenemos que comprobar el environment donde nos encontramos, segun si es producción o no, vamos a coger los datos del .env o les damos los datos local si estamos en dev
@@ -36,18 +36,45 @@ export const createUser = (name: string, email: string, avatarUrl: string) => {
     return makeGrapQLRequest(createUserMutation, variables)
 }
 
+export const fetchToken = async() => {
+    try {
+        const response = await fetch(`${serverUrl}/api/auth/token`);
+        return response.json();
+    } catch (error) {
+        throw error;
+    }
+}
+
 export const uploadImage = async(imagePath: string) => {
     try {
         const response = await fetch(`${serverUrl}/api/upload`, {
             method: 'POST',
             body: JSON.stringify({path: imagePath})
         })
-        
-    } catch (error) {
 
+        return response.json();
+
+    } catch (error) {
+        throw error;
     }
 }
 
 export const createNewProject = async(form: ProjectForm, creatorId:string, token:string) => {
-    const imageUrl = await uploadImage(form.image)
+    const imageUrl = await uploadImage(form.image);
+
+    if(imageUrl.url) {
+        client.setHeader("Authorization", `Bearer ${token}`);
+
+        const variables = {
+            input: {
+                ...form,
+                image: imageUrl.url,
+                createdBy: {
+                    link: creatorId
+                }
+            }
+        }
+
+        return makeGrapQLRequest(createProjectMutation, variables)
+    }
 }
