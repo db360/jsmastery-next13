@@ -32,6 +32,7 @@ const ProjectForm = ({ type, session }: Props) => {
         await createNewProject(form, session?.user?.id, token);
         router.push('/');
       }
+      
     } catch (error) {
       console.log(error);
     } finally {
