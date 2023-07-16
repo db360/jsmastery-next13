@@ -1,5 +1,5 @@
 import { ProjectForm } from "@/common.types";
-import { createProjectMutation, createUserMutation, getProjectByIdQuery, getUserQuery, projectsQuery } from "@/graphql";
+import { createProjectMutation, createUserMutation, getProjectByIdQuery, getProjectsOfUserQuery, getUserQuery, projectsQuery } from "@/graphql";
 import { GraphQLClient } from "graphql-request";
 
 // Tenemos que comprobar el environment donde nos encontramos, segun si es producción o no, vamos a coger los datos del .env o les damos los datos local si estamos en dev
@@ -89,4 +89,9 @@ export const fetchAllProjects = async(category?: string, endCursor?: string) => 
 export const getProjectDetails = (id: string) => {
     client.setHeader('x-api-key', apiKey);
     return makeGrapQLRequest(getProjectByIdQuery, {id})
+}
+
+export const getuserProjects= (id: string, last?: number) => {
+    client.setHeader('x-api-key', apiKey);
+    return makeGrapQLRequest(getProjectsOfUserQuery, {id, last})
 }
