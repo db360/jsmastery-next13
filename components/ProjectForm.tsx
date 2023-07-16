@@ -32,7 +32,7 @@ const ProjectForm = ({ type, session }: Props) => {
         await createNewProject(form, session?.user?.id, token);
         router.push('/');
       }
-      
+
     } catch (error) {
       console.log(error);
     } finally {
@@ -128,12 +128,6 @@ const ProjectForm = ({ type, session }: Props) => {
         state={form.githubUrl}
         placeholder="https://github.com/db360"
         setState={(value) => handleStateChange("githubUrl", value)}
-      />
-      <FormField
-        title="Title"
-        state={form.title}
-        placeholder="Flexibble"
-        setState={(value) => handleStateChange("title", value)}
       />
 
       {/* CustomInput Category...*/}
