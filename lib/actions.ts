@@ -1,5 +1,5 @@
 import { ProjectForm } from "@/common.types";
-import { createProjectMutation, createUserMutation, getProjectByIdQuery, getProjectsOfUserQuery, getUserQuery, projectsQuery } from "@/graphql";
+import { createProjectMutation, createUserMutation, deleteProjectMutation, getProjectByIdQuery, getProjectsOfUserQuery, getUserQuery, projectsQuery, updateProjectMutation } from "@/graphql";
 import { GraphQLClient } from "graphql-request";
 
 // Tenemos que comprobar el environment donde nos encontramos, segun si es producción o no, vamos a coger los datos del .env o les damos los datos local si estamos en dev
@@ -94,4 +94,43 @@ export const getProjectDetails = (id: string) => {
 export const getuserProjects= (id: string, last?: number) => {
     client.setHeader('x-api-key', apiKey);
     return makeGrapQLRequest(getProjectsOfUserQuery, {id, last})
+}
+
+export const deleteProject= (id: string, token: string) => {
+    client.setHeader("Authorization", `Bearer ${token}`);
+
+    return makeGrapQLRequest(deleteProjectMutation, { id })
+}
+
+export const updateProject= async(form: ProjectForm, projectId: string, token: string) => {
+
+    function isBase64DataUrl(value: string) {
+        const base64Regex = /^data:image\/[a-z]+;base,/;
+        return base64Regex.test(value);
+    }
+
+    let updatedForm = {...form};
+
+    const isUploadingNewImage = isBase64DataUrl(form.image);
+
+    if(isUploadingNewImage) {
+        const imageUrl = await uploadImage(form.image);
+
+        if(imageUrl) {
+            updatedForm = {
+                ...form,
+                image: imageUrl.url
+            }
+        }
+    }
+
+    const variables = {
+        id: projectId,
+        input: updatedForm,
+    }
+
+    client.setHeader("Authorization", `Bearer ${token}`);
+
+    return makeGrapQLRequest(updateProjectMutation, variables);
+    
 }

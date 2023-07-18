@@ -20,7 +20,7 @@ const CustomMenu = ({ title, state, filters, setState} : Props) => {
                 <Menu.Button className="flexCenter custom_menu-btn">
                     {state || 'Select a Category'}
                     <Image
-                    src="arrow-down.svg"
+                    src="/arrow-down.svg"
                     width={10}
                     height={5}
                     alt="Arrow Down"
