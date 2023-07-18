@@ -16,7 +16,8 @@ const RelatedProjects = async({ userId, projectId} : Props) => {
 
   if(filteredProjects?.length === 0) return null;
 
-  console.log(filteredProjects);
+  //console.log(filteredProjects);
+  
   return (
     <section className="flex flex-col mt-32 w-full">
       <div className="flexBetween">

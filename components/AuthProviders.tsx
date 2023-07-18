@@ -23,7 +23,7 @@ const AuthProviders = () => {
     const fetchProviders = async () => {
       const res = await getProviders();
 
-      console.log(res);
+      // console.log(res);
       setProviders(res as Providers);
     };
 
